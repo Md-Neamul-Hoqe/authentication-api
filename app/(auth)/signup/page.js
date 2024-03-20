@@ -1,3 +1,8 @@
+export const metadata = {
+    title: "Sing Up",
+};
+
+
 const SignUp = () => {
     return (
         <div>
