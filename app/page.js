@@ -1,28 +1,47 @@
 
-export const metadata = {
-  title: "Home",
-};
+import { SyncLoader } from "react-spinners";
+import getFetchData from "./utils/getFetchData";
+import Image from "next/image";
+import HandleAction from "./components/buttons/HandleAction";
 
 export default async function Home() {
-
-  const response = await fetch('http://localhost:3000/api/v1/users', {
-    method: 'GET',
-  })
-
-  // console.log(response);
-  const users = await response.json()
+  const { data: users } = await getFetchData('/v1/users')
 
   return (
-    <main className="text-center min-h-screen flex items-center justify-center">
-
-
+    <main className="text-center min-h-screen flex items-start justify-center">
       {
         users?.length
-          ? <h1 className="text-5xl">Total {users?.length} users found from <i>synchome</i> db</h1>
+          ? <div>
+            <h1 className="text-4xl font-mono capitalize py-5 mb-5">All Users</h1>
+            <table className="w-full max-w-7xl">
+              <thead>
+                <tr className="bg-gray-600 text-white">
+                  <th className="py-2 px-3 min-w-32">Photo</th>
+                  <th className="text-wrap py-2 px-3 min-w-max">Name</th>
+                  <th className="text-wrap py-2 px-3">Email</th>
+                  <th className="text-wrap py-2 px-3">Phone</th>
+                  <th className="py-2 px-3">Role</th>
+                  <th className="py-2 px-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  users?.map(user => <tr key={user?._id} className="border-b-2">
+                    <td><Image className="rounded-full m-5" src={user?.photo} width={80} height={80} alt={user?.name} /></td>
+                    <td>{user?.name}</td>
+                    <td>{user?.email}</td>
+                    <td>{user?.phone}</td>
+                    <td>{user?.role}</td>
+                    <td>
+                      <HandleAction user={user} />
+                    </td>
+                  </tr>)
+                }
+              </tbody>
+            </table>
+          </div>
           : <>
-            This is home page.
-            <br />
-            All users will loaded here.
+            <SyncLoader />
           </>
       }
     </main>
