@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from 'bcrypt';
 import { client, connectDB } from "../../dbConn";
 import JWT from 'jsonwebtoken';
-import { redirect } from "next/navigation";
+import { tokenName } from "@/app/utils/constansts";
 
 connectDB();
 
@@ -16,42 +16,40 @@ const usersCollection = db.collection('users');
 export async function POST(req) {
     try {
         const data = await req.json();
-        const { email, name, password } = data;
+        const { email, password } = data;
 
-        /* Encrypt password */
-        const saltRound = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, saltRound)
-
-        /* Save user info to database */
-        // console.log(hashedPassword);
+        /* Find user info from database */
         const isExist = await usersCollection.findOne({ email })
-        const user = { email, name, password: hashedPassword }
+        const user = { ...isExist }
 
+        /* Check the email exist or not */
+        if (!isExist) {
+            NextResponse.json({ message: 'No such account found. Please sign up first.' }, { status: 401 })
+            return NextResponse.redirect(new URL('/signup', req.nextUrl))
+        }
+
+        /* Check the password is coincide with the database */
+        const isPassSame = await bcrypt.compare(password, user?.password)
+
+        console.log('Passwords are coincide: ', isPassSame);
+        /* Check the passwords are coincide or not */
+        if (!isPassSame) {
+            return NextResponse.json({ message: 'User email or password is wrong. Give a correct one.' }, { status: 401 })
+        }
+
+        /* Set encrypted data to the token */
         const tokenData = {
             email,
-            name
-        }
-        
-        /*  */
-        if (!isExist) {
-            user.role = 'guest'
-            tokenData.role = 'guest'
-            try {
-                const res = await usersCollection.insertOne(user)
-                console.log(res);
-            } catch (error) {
-                return NextResponse.json({ error: error.message }, { status: 500 })
-            }
-        } else {
-            tokenData.role = isExist?.role
+            name: user?.name,
+            role: user?.role
         }
 
-        /* Create token [Must be from client side (server side not worked)] */
-        const token = JWT.sign(tokenData, 'secret', { expiresIn: '1h' })
+        /* Create token [The request must be from client side (server side not worked)] */
+        const token = JWT.sign(tokenData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
 
-        const response = NextResponse.json({ message: 'Sign in successful.', user }, { status: 200 });
+        const response = NextResponse.json({ message: `Welcome back ${user?.name}` }, { status: 200 });
 
-        response.cookies.set('token', token, {
+        response.cookies.set(tokenName, token, {
             httpOnly: true
         })
 

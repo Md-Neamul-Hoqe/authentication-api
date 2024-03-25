@@ -1,3 +1,5 @@
+import SignUpForm from "@/app/components/form/SignUpForm";
+
 export const metadata = {
     title: "Sing Up",
 };
@@ -5,8 +7,8 @@ export const metadata = {
 
 const SignUp = () => {
     return (
-        <div>
-            This is Sign Up page
+        <div className="flex justify-center items-center min-h-screen">
+            <SignUpForm />
         </div>
     );
 };
