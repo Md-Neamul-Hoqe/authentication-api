@@ -33,6 +33,7 @@ export default async function Home() {
                     <td>{user?.phone}</td>
                     <td>{user?.role}</td>
                     <td>
+                      {/* practice purpose */}
                       <HandleAction user={user} />
                     </td>
                   </tr>)
@@ -40,9 +41,9 @@ export default async function Home() {
               </tbody>
             </table>
           </div>
-          : <>
-            <SyncLoader />
-          </>
+          : <div className="bg-gray-400 flex justify-center items-center min-h-screen w-screen">
+            <SyncLoader color="magenta" />
+          </div>
       }
     </main>
   );

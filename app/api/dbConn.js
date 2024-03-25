@@ -2,6 +2,8 @@ import { MongoClient, ServerApiVersion } from 'mongodb';
 
 const uri = process.env.MONGODB_URI;
 
+// console.log('URI: ', uri);
+
 /* check env is found or not */
 if (!uri) {
     throw new Error('Invalid/missing environment variable: "MONGODB_URI"')
@@ -15,10 +17,11 @@ const client = new MongoClient(uri, {
     }
 });
 
-// console.log(client);
+// console.log('MDB Client: ', client);
 
 async function connectDB() {
     try {
+        // console.log('connect called');
         await client.connect();
         console.log('Connected to MongoDB Atlas');
     } catch (error) {
