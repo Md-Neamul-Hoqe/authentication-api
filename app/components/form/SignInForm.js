@@ -5,6 +5,8 @@ import { baseURL } from "@/app/utils/constansts";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import EmailPassForm from "./EmailPassForm";
+import Link from "next/link";
+import AuthFooter from "../footers/AuthFooter";
 
 const SignInForm = () => {
     /* useRouter() must import from next/navigation to work */
@@ -45,15 +47,10 @@ const SignInForm = () => {
     }
 
     return (
-        <div className="border-green-500 border rounded-lg max-w-7xl min-w-96">
-            <h2 className="bg-green-300 text-center text-2xl py-2 font-serif font-medium border-b-2 border-gray-900 border-spacing-10 rounded-t-lg">Sign In</h2>
-            <form onSubmit={handleSignIn} className="flex flex-col gap-6">
-                <EmailPassForm />
-                <div className="flex justify-end m-2">
-                    <input type="submit" value="Sign In" className="rounded px-5 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold" />
-                </div>
-            </form>
-        </div>
+        <form onSubmit={handleSignIn} className="flex flex-col gap-6">
+            <EmailPassForm />
+            <AuthFooter isSignIn={true} />
+        </form>
     );
 };
 

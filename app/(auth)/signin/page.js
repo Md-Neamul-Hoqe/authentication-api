@@ -1,11 +1,16 @@
 import SignInForm from "@/app/components/form/SignInForm";
+import AuthHeading from "@/app/components/heading/AuthHeading";
+
+export const metadata = {
+    title: "Sing In",
+};
 
 const SignIn = () => {
-
     return (
-        <div className="flex justify-center items-center min-h-screen">
+        <>
+            <AuthHeading heading={'Sign In'} />
             <SignInForm />
-        </div>
+        </>
     );
 };
 
