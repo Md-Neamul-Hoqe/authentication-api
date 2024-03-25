@@ -1,9 +1,11 @@
 'use client'
 
 import { AuthContext } from "@/app/Providers/AuthProvider";
+import { useRouter } from "next/router";
 import { useContext } from "react";
 
 const SignInForm = () => {
+    const router = useRouter()
     const { setUser } = useContext(AuthContext)
 
     const handleSignIn = async (e) => {
@@ -25,10 +27,14 @@ const SignInForm = () => {
         const res = await data.json()
 
         if (res?.error) {
-            // console.log(res.error);
+            console.log(res.error);
+            alert(res.error);
         } else {
             console.log('Sign in result: ', res);
             setUser({ name, email, role: res?.user?.role })
+
+            /* after sign in then redirect to a path  */
+            return router.push('/')
         }
     }
 
