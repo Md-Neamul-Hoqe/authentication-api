@@ -1,23 +1,18 @@
+import { tokenName } from "@/app/utils/constansts";
 import { NextResponse } from "next/server";
-import { client, connectDB } from "../../dbConn";
-import { redirect } from "next/navigation";
-
-connectDB();
-
-if (!process.env.DB_NAME) {
-    throw new Error('Invalid/missing environment variable: "DB_NAME"')
-}
-
-const db = client.db(process.env.DB_NAME);
 
 export async function POST(req) {
     try {
-        const response = NextResponse.json({ message: 'Log Out Successfully.' })
+        const response = NextResponse.json({ message: 'Log Out Successfully.' }, { status: 200 })
 
-        /* Logout */
-        return response.cookies.delete('token')
+        /* Logout [direct NextResponse doesn't work] */
+        response.cookies.delete(tokenName)
+
+        /* Redirect to sign-in page after logout [response doesn't work] */
+        NextResponse.redirect(new URL(`/signin`, req.nextUrl))
+
+        return response
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 })
-
     }
 }

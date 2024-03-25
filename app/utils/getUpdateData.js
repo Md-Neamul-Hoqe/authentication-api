@@ -1,7 +1,8 @@
+import { baseURL } from "./constansts";
 
 const getUpdateData = async (apiEnd, user) => {
     // console.log(user);
-    const response = await fetch(`http://localhost:3000/api${apiEnd}`, {
+    const response = await fetch(`${baseURL}${apiEnd}`, {
         method: 'PATCH',
         headers: {
             'content-type': 'application/json'

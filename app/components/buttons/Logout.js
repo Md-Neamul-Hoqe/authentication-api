@@ -1,9 +1,23 @@
 'use client'
 
-const Logout = () => {
+import { baseURL } from "@/app/utils/constansts";
+import { useRouter } from "next/navigation";
 
-    const handleLogout = () => {
-        console.log('logout');
+const Logout = () => {
+    const router = useRouter()
+
+    const handleLogout = async () => {
+        const res = await fetch(`${baseURL}/v1/logout`, {
+            method: 'POST'
+        })
+
+        const data = await res.json()
+
+        if (data?.error) {
+            return alert(data?.error)
+        }
+
+        router.push('/signin')
     }
 
     return (

@@ -1,10 +1,12 @@
 'use client'
 
 import { AuthContext } from "@/app/Providers/AuthProvider";
-import { useRouter } from "next/router";
+import { baseURL } from "@/app/utils/constansts";
+import { useRouter } from "next/navigation";
 import { useContext } from "react";
 
 const SignInForm = () => {
+    /* useRouter() must import from next/navigation to work */
     const router = useRouter()
     const { setUser } = useContext(AuthContext)
 
@@ -16,7 +18,9 @@ const SignInForm = () => {
         const email = form.get('uemail')
         const password = form.get('password')
 
-        const data = await fetch('http://localhost:3000/api/v1/signin', {
+        /* TODO reset form after getting form info */
+
+        const res = await fetch(`${baseURL}/v1/signin`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
@@ -24,31 +28,33 @@ const SignInForm = () => {
             body: JSON.stringify({ name, email, password })
         });
 
-        const res = await data.json()
+        const data = await res.json()
 
-        if (res?.error) {
-            console.log(res.error);
-            alert(res.error);
+        if (data?.error) {
+            console.log(data.error);
+
+            /* Show toast */
+            alert(data.error);
         } else {
-            console.log('Sign in result: ', res);
-            setUser({ name, email, role: res?.user?.role })
+            /* set user info to the auth state */
+            setUser({ name, email, role: data?.user?.role })
 
-            /* after sign in then redirect to a path  */
+            /* after sign in then redirect to a path from client side  */
             return router.push('/')
         }
     }
 
     return (
         <form onSubmit={handleSignIn} className="border-green-500 border-2 rounded-lg flex flex-col gap-6">
-            <div className="">
+            <div className="focus:border-b-4 border-blue-600">
                 <label className="sr-only" htmlFor="uname">User&apos;s Name</label>
                 <input className="bg-gray-500 text-white px-5 py-3" placeholder="Enter your name..." type="text" name="uname" id="uname" />
             </div>
-            <div className="">
+            <div className="focus:border-b-4 border-blue-600">
                 <label className="sr-only" htmlFor="uemail">User&apos;s Email</label>
                 <input className="bg-gray-500 text-white px-5 py-3" placeholder="Enter your email..." type="email" name="uemail" id="uemail" />
             </div>
-            <div className="">
+            <div className="focus:border-b-4 border-blue-600">
                 <label className="sr-only" htmlFor="password">User&apos;s Name</label>
                 <input className="bg-gray-500 text-white px-5 py-3" placeholder="Enter your password..." type="password" name="password" id="password" />
             </div>

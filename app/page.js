@@ -1,8 +1,7 @@
-
-import { SyncLoader } from "react-spinners";
 import getFetchData from "./utils/getFetchData";
-import Image from "next/image";
 import HandleAction from "./components/buttons/HandleAction";
+import { SyncLoader } from "react-spinners";
+import Image from "next/image";
 
 export default async function Home() {
   const { data: users } = await getFetchData('/v1/users')
@@ -27,7 +26,7 @@ export default async function Home() {
               <tbody>
                 {
                   users?.map(user => <tr key={user?._id} className="border-b-2">
-                    <td><Image className="rounded-full m-5" src={user?.photo} width={80} height={80} alt={user?.name} /></td>
+                    <td>{user?.photo ? <Image className="rounded-full m-5" src={user?.photo} width={80} height={80} alt={user?.name} /> : <span className="w-20 h-20 rounded-full bg-gray-500 m-5"></span>}</td>
                     <td>{user?.name}</td>
                     <td>{user?.email}</td>
                     <td>{user?.phone}</td>

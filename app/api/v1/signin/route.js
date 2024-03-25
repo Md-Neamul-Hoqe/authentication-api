@@ -24,28 +24,27 @@ export async function POST(req) {
 
         /* Save user info to database */
         // console.log(hashedPassword);
-        // const isExist = await    usersCollection.findOne({ email })
+        const isExist = await usersCollection.findOne({ email })
         const user = { email, name, password: hashedPassword }
 
         const tokenData = {
             email,
             name
         }
-
-        // console.log(isExist, Object.keys(isExist).length);
-        tokenData.role = 'guest'
-        // if (!isExist) {
-        //     user.role = 'guest'
-        //     tokenData.role = 'guest'
-        //     try {
-        //         const res = await usersCollection.insertOne(user)
-        //         console.log(res);
-        //     } catch (error) {
-        //         return NextResponse.json({ error: error.message }, { status: 500 })
-        //     }
-        // } else {
-        //     tokenData.role = isExist?.role
-        // }
+        
+        /*  */
+        if (!isExist) {
+            user.role = 'guest'
+            tokenData.role = 'guest'
+            try {
+                const res = await usersCollection.insertOne(user)
+                console.log(res);
+            } catch (error) {
+                return NextResponse.json({ error: error.message }, { status: 500 })
+            }
+        } else {
+            tokenData.role = isExist?.role
+        }
 
         /* Create token [Must be from client side (server side not worked)] */
         const token = JWT.sign(tokenData, 'secret', { expiresIn: '1h' })
@@ -55,10 +54,6 @@ export async function POST(req) {
         response.cookies.set('token', token, {
             httpOnly: true
         })
-
-        // response.redirected = true; response.url = '/';
-
-        console.log(response);
 
         return response
     } catch (error) {

@@ -1,6 +1,7 @@
+import { baseURL } from "./constansts";
 
 const getFetchData = async (apiEnd) => {
-    const response = await fetch(`http://localhost:3000/api${apiEnd}`, {
+    const response = await fetch(`${baseURL}${apiEnd}`, {
         method: 'GET',
     })
     
