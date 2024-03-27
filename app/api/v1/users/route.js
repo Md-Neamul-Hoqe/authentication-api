@@ -1,6 +1,8 @@
 import { client, connectDB } from "../../dbConn";
 import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
+import { tokenName } from "@/app/utils/constants";
+import { verify } from "jsonwebtoken";
 
 connectDB();
 
@@ -11,10 +13,11 @@ if (!process.env.DB_NAME) {
 const db = client.db(process.env.DB_NAME);
 const usersCollection = db.collection('users');
 
-
+/* Get all users */
 export async function GET(req) {
     try {
         const users = await usersCollection.find({}).toArray()
+
         return NextResponse.json({ data: users }, { status: 200 })
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 })
@@ -23,20 +26,43 @@ export async function GET(req) {
 
 export async function PATCH(req) {
     try {
-        const oldUser = await req.json();
-        const id = oldUser._id
+        const updateRequestedUser = await req.json();
+        const { name, phone, email, _id: id } = updateRequestedUser
 
         const newUser = {
             $set: {
-                name: oldUser?.name,
-                phone: oldUser?.phone,
-                email: oldUser?.email,
+                name,
+                phone,
+                email,
             }
         }
 
-        const result = await usersCollection.updateOne({ _id: new ObjectId(id) }, newUser, { upsert: true })
+        /* Authorization: get the current user's token as object {name, value} */
+        const token = req.cookies.get(tokenName)
 
-        return NextResponse.json({ data: result }, { status: 200 })
+        if (token[ 'name' ] !== tokenName) {
+            return NextResponse.json({
+                message: 'Unauthorized'
+            }, { status: 401 })
+        }
+
+        const { role } = verify(token[ 'value' ], process.env.ACCESS_TOKEN_SECRET)
+
+        if (role === 'admin') {
+            const demoFetch = await usersCollection.findOne({ _id: new ObjectId(id) })
+            const result = await usersCollection.updateOne({ _id: new ObjectId(id) }, newUser, { upsert: true })
+
+            console.log('Modification: ', demoFetch, result);
+
+            if (result?.acknowledged && result?.modifiedCount > 0)
+                return NextResponse.json({ data: result }, { status: 200 })
+            return NextResponse.json({ data: 'User modification unsuccessful.' }, { status: 200 });
+        } else {
+            return NextResponse.json({
+                message: 'Forbidden Access'
+            }, { status: 403 })
+        }
+
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 })
     }
@@ -46,12 +72,27 @@ export async function DELETE(req) {
     try {
         const id = req.url.split('?')[ 1 ]
 
-        console.log(req.cookies);
+        const token = req.cookies.get(tokenName)
 
-        const result = await usersCollection.findOne({ _id: new ObjectId(id) })
-        // const result = await usersCollection.deleteOne({ _id: new ObjectId(id) })
+        if (token[ 'name' ] !== tokenName) {
+            return NextResponse.json({
+                message: 'Unauthorized'
+            }, { status: 401 })
+        }
 
-        return NextResponse.json({ data: result }, { status: 200 })
+        const { role } = verify(token[ 'value' ], process.env.ACCESS_TOKEN_SECRET)
+
+        if (role === 'admin') {
+            const result = await usersCollection.deleteOne({ _id: new ObjectId(id) })
+
+            if (result?.acknowledged && result?.deletedCount > 0)
+                return NextResponse.json({ data: 'User deleted successfully.' }, { status: 200 });
+            return NextResponse.json({ data: 'User deletion unsuccessful.' }, { status: 200 });
+        } else {
+            return NextResponse.json({
+                message: 'Forbidden Access'
+            }, { status: 403 })
+        }
 
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 })

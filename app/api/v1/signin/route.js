@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from 'bcrypt';
 import { client, connectDB } from "../../dbConn";
 import JWT from 'jsonwebtoken';
-import { tokenName } from "@/app/utils/constansts";
+import { tokenName } from "@/app/utils/constants";
 
 connectDB();
 
@@ -21,7 +21,7 @@ export async function POST(req) {
         /* Find user info from database */
         const isExist = await usersCollection.findOne({ email })
         const user = { ...isExist }
-
+        console.log(user);
         /* Check the email exist or not */
         if (!isExist) {
             NextResponse.json({ message: 'No such account found. Please sign up first.' }, { status: 401 })
@@ -31,7 +31,6 @@ export async function POST(req) {
         /* Check the password is coincide with the database */
         const isPassSame = await bcrypt.compare(password, user?.password)
 
-        console.log('Passwords are coincide: ', isPassSame);
         /* Check the passwords are coincide or not */
         if (!isPassSame) {
             return NextResponse.json({ message: 'User email or password is wrong. Give a correct one.' }, { status: 401 })

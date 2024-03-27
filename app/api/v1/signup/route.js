@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { client, connectDB } from "../../dbConn";
 import JWT from 'jsonwebtoken';
 import { redirect } from "next/navigation";
-import { tokenName } from "@/app/utils/constansts";
+import { tokenName } from "@/app/utils/constants";
 
 connectDB();
 

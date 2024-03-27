@@ -1,11 +1,14 @@
 'use client'
 
+import { baseURL } from "@/app/utils/constants";
 import getDeleteData from "@/app/utils/getDeleteData";
 import getUpdateData from "@/app/utils/getUpdateData";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SyncLoader } from "react-spinners";
 
 const HandleAction = ({ user }) => {
+    const { push } = useRouter()
     const [ loading, setLoading ] = useState(false)
 
     const handleEdit = async (user) => {
@@ -18,8 +21,26 @@ const HandleAction = ({ user }) => {
     const handleDelete = async (user) => {
         setLoading(true)
         const result = await getDeleteData(`/v1/users?${user?._id}`, user)
+
+        /* check the token is expired or not */
+        if (result.error == 'jwt expired') {
+
+            /* logout expired user session */
+            const res = await fetch(`${baseURL}/v1/logout`, {
+                method: 'POST'
+            })
+
+            const data = await res.json()
+
+            if (data?.error) {
+                return alert(data?.error)
+            }
+
+            return push('/signin')
+        } {
+            console.log('Delete the user: ', result.data);
+        }
         setLoading(false)
-        console.log('Delete the user: ', result.data);
     }
 
     return (

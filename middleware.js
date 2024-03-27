@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { tokenName } from "./app/utils/constansts";
+import { tokenName } from "./app/utils/constants";
 
 export function middleware(req) {
     const path = req.nextUrl.pathname;

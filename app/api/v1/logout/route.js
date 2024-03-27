@@ -1,4 +1,4 @@
-import { tokenName } from "@/app/utils/constansts";
+import { tokenName } from "@/app/utils/constants";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {

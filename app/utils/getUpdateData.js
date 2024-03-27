@@ -1,4 +1,4 @@
-import { baseURL } from "./constansts";
+import { baseURL } from "./constants";
 
 const getUpdateData = async (apiEnd, user) => {
     // console.log(user);
@@ -7,6 +7,7 @@ const getUpdateData = async (apiEnd, user) => {
         headers: {
             'content-type': 'application/json'
         },
+        credentials: "include",
         body: JSON.stringify(user)
     })
 

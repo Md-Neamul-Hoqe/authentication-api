@@ -4,7 +4,8 @@ import { SyncLoader } from "react-spinners";
 import Image from "next/image";
 
 export default async function Home() {
-  const { data: users } = await getFetchData('/v1/users')
+  const { data: users, error, message } = await getFetchData('/v1/users')
+  console.log(error, message);
 
   return (
     <main className="text-center min-h-screen flex items-start justify-center">

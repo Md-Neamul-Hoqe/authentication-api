@@ -1,7 +1,7 @@
 'use client'
 
 import { AuthContext } from "@/app/Providers/AuthProvider";
-import { baseURL } from "@/app/utils/constansts";
+import { baseURL } from "@/app/utils/constants";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import EmailPassForm from "./EmailPassForm";

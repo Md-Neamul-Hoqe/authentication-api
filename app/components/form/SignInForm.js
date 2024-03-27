@@ -1,7 +1,7 @@
 'use client'
 
 import { AuthContext } from "@/app/Providers/AuthProvider";
-import { baseURL } from "@/app/utils/constansts";
+import { baseURL } from "@/app/utils/constants";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import EmailPassForm from "./EmailPassForm";
@@ -40,6 +40,9 @@ const SignInForm = () => {
         } else {
             /* set user info to the auth state */
             setUser({ name, email, role: data?.user?.role })
+
+            /* Show welcome */
+            alert(data?.message)
 
             /* after sign in then redirect to a path from client side  */
             return router.push('/')
