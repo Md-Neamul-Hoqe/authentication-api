@@ -49,10 +49,7 @@ export async function PATCH(req) {
         const { role } = verify(token[ 'value' ], process.env.ACCESS_TOKEN_SECRET)
 
         if (role === 'admin') {
-            const demoFetch = await usersCollection.findOne({ _id: new ObjectId(id) })
             const result = await usersCollection.updateOne({ _id: new ObjectId(id) }, newUser, { upsert: true })
-
-            console.log('Modification: ', demoFetch, result);
 
             if (result?.acknowledged && result?.modifiedCount > 0)
                 return NextResponse.json({ data: result }, { status: 200 })

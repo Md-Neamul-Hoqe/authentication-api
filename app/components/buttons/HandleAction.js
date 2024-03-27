@@ -14,7 +14,24 @@ const HandleAction = ({ user }) => {
     const handleEdit = async (user) => {
         setLoading(true)
         const result = await getUpdateData('/v1/users', user)
-        console.log('Edit the user: ', result.data);
+        /* check the token is expired or not */
+        if (result.error == 'jwt expired') {
+
+            /* logout expired user session */
+            const res = await fetch(`${baseURL}/v1/logout`, {
+                method: 'POST'
+            })
+
+            const data = await res.json()
+
+            if (data?.error) {
+                return alert(data?.error)
+            }
+
+            return push('/signin')
+        } {
+            console.log('Edit the user: ', result);
+        }
         setLoading(false)
     }
 
