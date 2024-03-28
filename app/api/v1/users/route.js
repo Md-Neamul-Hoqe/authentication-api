@@ -62,6 +62,8 @@ export async function PATCH(req) {
 
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 })
+    } finally {
+        await client.close()
     }
 }
 
@@ -93,5 +95,7 @@ export async function DELETE(req) {
 
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 })
+    } finally {
+        await client.close()
     }
 }
